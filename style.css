@@ -1,0 +1,19 @@
+body {
+    display: flex;
+    justify-content: center;
+}
+
+#container {
+    display: flex;
+    height: 40vw;
+    width: 40vw;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+.row,
+.column {
+    flex: 1;
+}
