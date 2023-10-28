@@ -11,18 +11,18 @@ const proBoardSize = 24;
 const proMines = 99;
 
 // function that genereates random index of board array to be a mine
-// random from 0-max - in pro level max would be 24
+// random from 0 to (max-1) - in pro level max would be 24 so 0-23
 function getRandomInt(max) { 
-    return Math.floor(Math.random() * max + 1);
+    return Math.floor(Math.random() * max);
 }
 
 // creates real board that won't change once mines are placed
 function createMyBoard(size) {
     let myBoard = [];
-    for (let i=1; i<=size; i++) {
+    for (let i=0; i<size; i++) {
         myBoard[i] = [];            // 2D array
-        for (let j=1; j<=size; j++) {
-            myBoard[i][j] = 'u';
+        for (let j=0; j<size; j++) {
+            myBoard[i][j] = '';
         }
     }
     return myBoard;
@@ -54,8 +54,8 @@ function placeMineRandom(level) {
             break;
     }
     let board = createMyBoard(max);     // creating our board with mines
-    let i = 1;                          //iterator
-    while (i<=numberOfMines) {
+    let i = 0;                          //iterator
+    while (i<numberOfMines) {
         let column = getRandomInt(max);  // random int from 0-max for a column in a board
         let row = getRandomInt(max);     // random int from 0-max for a row in a board
       
@@ -85,5 +85,5 @@ function createBoard(size) {
     }
 }
 
-createBoard(beginnerBoardSize);
-placeMineRandom('semi');
+createBoard(semiBoardSize);
+placeMineRandom('beginner');
