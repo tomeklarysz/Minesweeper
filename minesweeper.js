@@ -9,9 +9,8 @@ const semiMines = 40;
 
 const proBoardSize = 24;
 const proMines = 99;
-
-// function that genereates random index of board array to be a mine
-// random from 0 to (max-1) - in pro level max would be 24 so 0-23
+ 
+// function that genereates random integer from 0 to (max-1) - in pro level max would be 24 so 0-23
 function getRandomInt(max) { 
     return Math.floor(Math.random() * max);
 }
@@ -27,14 +26,30 @@ function createMyBoard(size) {
     }
     return myBoard;
 }
+// function to check how many mines are nearby
+function NearbyMines(arr, col, row) {   //arr is our board, col and row are its indexes
+    let count = 0;
 
-/*function NearbyMines(arr) {
-    arr[0]
-} */
+    //checking if we are near edge of the board
+    const isNotNorth = Boolean(col-1 >= 0); 
+    const isNotSouth = Boolean(col+1 < arr.length);
+    const isNotWest = Boolean(row-1 >= 0);
+    const isNotEast = Boolean(row+1 < arr.length);
+    
+    if (isNotNorth && isNotWest && arr[col-1][row-1] === '*') count++; // checking west side
+    if (isNotWest && arr[col][row-1] === '*') count++;
+    if (isNotSouth && isNotWest && arr[col+1][row-1] === '*') count++;
+    if (isNotSouth && arr[col+1][row] === '*') count++;            // south
+    if (isNotSouth && isNotEast && arr[col+1][row+1] === '*') count++; // east
+    if (isNotEast && arr[col][row+1] === '*') count++;
+    if (isNotNorth && isNotEast && arr[col-1][row+1] === '*') count++;
+    if (isNotNorth && arr[col-1][row] === '*') count++;            // north
+    return count;
+}
 
 // places number of mines dependent of level in random places on board
 function placeMineRandom(level) {
-    let max;                    //maximum index of board array
+    let max;                    // maximum index of board array
     let numberOfMines;          // how many mines in levels
     // assign them
     switch(level) {
@@ -64,7 +79,7 @@ function placeMineRandom(level) {
             i++;
         }
     }
-    console.table(board);
+    // console.table(board);
     return board;
 }
 
@@ -75,7 +90,6 @@ function createBoard(size) {
         // this way we can use flexbox 
         const column = document.createElement('div');
         column.setAttribute('class', 'column');
-        // column.setAttribute('id);
         container.appendChild(column);
         for (let j = 0; j < size; j++) {
             const row = document.createElement('button');
@@ -85,5 +99,6 @@ function createBoard(size) {
     }
 }
 
-createBoard(semiBoardSize);
-placeMineRandom('beginner');
+createBoard(beginnerBoardSize);
+let myBoard = placeMineRandom('semi');
+console.table(myBoard);
