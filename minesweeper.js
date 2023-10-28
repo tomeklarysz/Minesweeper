@@ -15,8 +15,8 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
-// creates real board that won't change once mines are placed
-function createMyBoard(size) {
+// creates real, empty board that won't change once mines are placed
+function createEmptyBoard(size) {
     let myBoard = [];
     for (let i=0; i<size; i++) {
         myBoard[i] = [];            // 2D array
@@ -68,7 +68,7 @@ function placeMineRandom(level) {
         default:
             break;
     }
-    let board = createMyBoard(max);     // creating our board with mines
+    let board = createEmptyBoard(max);     // creating our board with mines
     let i = 0;                          //iterator
     while (i<numberOfMines) {
         let column = getRandomInt(max);  // random int from 0-max for a column in a board
@@ -81,6 +81,19 @@ function placeMineRandom(level) {
     }
     // console.table(board);
     return board;
+}
+
+//function to create real board with mines and numbers;
+function createRealBoard(level) {
+    let realBoard = placeMineRandom(level);
+    for (let i=0; i<realBoard.length; i++) {
+        for (let j=0; j<realBoard.length; j++) {
+            if (realBoard[i][j] !== '*') {
+                realBoard[i][j] = NearbyMines(realBoard, i, j);
+            }
+        }
+    }
+    return realBoard;
 }
 
 // display board;
@@ -100,5 +113,5 @@ function createBoard(size) {
 }
 
 createBoard(beginnerBoardSize);
-let myBoard = placeMineRandom('semi');
+let myBoard = createRealBoard('semi');
 console.table(myBoard);
