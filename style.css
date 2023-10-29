@@ -24,7 +24,8 @@ body {
     font-weight: 800;
 }
 
-#lost {
+#lost,
+#win {
     display: flex;
     justify-content: center;
     align-items: center;

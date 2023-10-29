@@ -1,14 +1,14 @@
 const container = document.querySelector('#container');
 
 // board sizes e.g. 9x9 and number of mines
-const beginnerBoardSize = 9;
-const beginnerMines = 10;
+const easyBoardSize = 9;
+const easyMines = 10;
 
-const semiBoardSize = 16;
-const semiMines = 40;
+const mediumBoardSize = 16;
+const mediumMines = 40;
 
-const proBoardSize = 24;
-const proMines = 99;
+const hardBoardSize = 24;
+const hardMines = 99;
  
 // function that genereates random integer from 0 to (max-1) - in pro level max would be 24 so 0-23
 function getRandomInt(max) { 
@@ -53,17 +53,17 @@ function placeMineRandom(level) {
     let numberOfMines;          // how many mines in levels
     // assign them
     switch(level) {
-        case 'beginner':
-            numberOfMines = beginnerMines;
-            max = beginnerBoardSize;
+        case 'easy':
+            numberOfMines = easyMines;
+            max = easyBoardSize;
             break;
-        case 'semi':
-            numberOfMines = semiMines;
-            max = semiBoardSize;
+        case 'medium':
+            numberOfMines = mediumMines;
+            max = mediumBoardSize;
             break;
-        case 'pro':
-            numberOfMines = proMines;
-            max = proBoardSize;
+        case 'hard':
+            numberOfMines = hardMines;
+            max = hardBoardSize;
             break;
         default:
             break;
@@ -112,6 +112,13 @@ function createBoard(level, size) {
             column.appendChild(row);
         }
     }
+    
+    return board;
+}
+
+
+function play(level, size, mines) {
+    const board = createBoard(level, size);
     const rows = document.querySelectorAll('.row');
     const arr = Array.from(rows);
     const tails = [];
@@ -119,18 +126,45 @@ function createBoard(level, size) {
     while(arr.length) {
         tails.push(arr.splice(0, size));
     }
+    let flagsCounter = 0;
+    let didLose = false;
+    let didWin = false;
 
+    // check if player won
+    function check() {
+        let howManyFilled = 0;
+        for (let i=0; i<size; i++) {
+            for (let j=0; j<size; j++) {
+                if (tails[i][j].textContent == '') {
+                    break;
+                } else {
+                    howManyFilled++;
+                }
+            }
+        }
+        if (howManyFilled == Math.pow(size, 2)) didWin = true;
+        if (didWin && flagsCounter === mines) {
+            const body = document.querySelector('body');
+            const winDiv = document.createElement('div');
+            winDiv.setAttribute('id', 'win');
+            winDiv.textContent = "You won!";
+                
+            body.appendChild(winDiv);
+            container.style.opacity = 0.4;
+        }
+    }
     // adding event listener
     for (let i=0; i<size; i++) {
         for (let j=0; j<size; j++) {
             tails[i][j].addEventListener('click', () => {
                 if (board[i][j] === '*') {
-                // shows whole board
+                    // shows whole board
                     for (let k=0; k<size; k++) {
                         for (let l=0; l<size; l++) {
                             tails[k][l].textContent = board[k][l];
                         }
                     }
+                    didLose = true;
                     const body = document.querySelector('body');
                     const lostDiv = document.createElement('div');
                     lostDiv.setAttribute('id', 'lost');
@@ -139,14 +173,33 @@ function createBoard(level, size) {
                     body.appendChild(lostDiv);
                     container.style.opacity = 0.4;
 
+                
                 } else {
+                    if (tails[i][j].textContent === '#') {
+                        flagsCounter--;
+                    }
                     tails[i][j].textContent = board[i][j];
                 }
+                check();
+                console.log(`flags: ${flagsCounter}`);
+                console.log(didWin);
             });
+            tails[i][j].addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                if (tails[i][j].textContent !== '#') {
+                    tails[i][j].textContent = '#'; 
+                    flagsCounter++;
+                }
+                check();
+                console.log(`flags: ${flagsCounter}`);
+                console.log(didWin);
+            });
+
         }
     }
     return board;
 }
 
-let myBoard = createBoard('semi', semiBoardSize);
+let myBoard = play('easy', easyBoardSize, easyMines);
 console.table(myBoard);
+console.log(`number of mines: ${easyMines}`);
