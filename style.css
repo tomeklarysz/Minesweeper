@@ -1,6 +1,7 @@
 body {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 #container {
@@ -21,4 +22,19 @@ body {
 
 .row.mine {
     font-weight: 800;
+}
+
+#lost {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 500px;
+    height: 200px;
+    border: solid;
+    border-radius: 15px;
+    background: white;
+    font-size: xx-large;
+    font-weight: 800;
+    font-family: monospace;
 }

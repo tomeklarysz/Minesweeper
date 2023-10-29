@@ -131,8 +131,15 @@ function createBoard(level, size) {
                             tails[k][l].textContent = board[k][l];
                         }
                     }
+                    const body = document.querySelector('body');
+                    const lostDiv = document.createElement('div');
+                    lostDiv.setAttribute('id', 'lost');
+                    lostDiv.textContent = "You lost!";
+                    
+                    body.appendChild(lostDiv);
+                    container.style.opacity = 0.4;
+
                 } else {
-                    console.log(tails[i][j]);
                     tails[i][j].textContent = board[i][j];
                 }
             });
