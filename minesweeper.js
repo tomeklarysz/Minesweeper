@@ -97,21 +97,49 @@ function createRealBoard(level) {
 }
 
 // display board;
-function createBoard(size) {
+function createBoard(level, size) {
+    const board = createRealBoard(level);     // integrate real board with the one we display
+    
+    // looping to create grid and add listeners
     for (let i=0; i<size; i++) {
-        
         // this way we can use flexbox 
         const column = document.createElement('div');
         column.setAttribute('class', 'column');
         container.appendChild(column);
-        for (let j = 0; j < size; j++) {
+        for (let j=0; j<size; j++) {
             const row = document.createElement('button');
             row.setAttribute('class', 'row');
             column.appendChild(row);
         }
     }
+    const rows = document.querySelectorAll('.row');
+    const arr = Array.from(rows);
+    const tails = [];
+    //convert nodelist to 2d array
+    while(arr.length) {
+        tails.push(arr.splice(0, size));
+    }
+
+    // adding event listener
+    for (let i=0; i<size; i++) {
+        for (let j=0; j<size; j++) {
+            tails[i][j].addEventListener('click', () => {
+                if (board[i][j] === '*') {
+                // shows whole board
+                    for (let k=0; k<size; k++) {
+                        for (let l=0; l<size; l++) {
+                            tails[k][l].textContent = board[k][l];
+                        }
+                    }
+                } else {
+                    console.log(tails[i][j]);
+                    tails[i][j].textContent = board[i][j];
+                }
+            });
+        }
+    }
+    return board;
 }
 
-createBoard(beginnerBoardSize);
-let myBoard = createRealBoard('semi');
+let myBoard = createBoard('semi', semiBoardSize);
 console.table(myBoard);
