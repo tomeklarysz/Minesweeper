@@ -29,6 +29,11 @@ function createEmptyBoard(size) {
 // function to check how many mines are nearby
 function NearbyMines(arr, col, row) {   //arr is our board, col and row are its indexes
     let count = 0;
+    
+    //checking if we are on the board
+    const isCol = Boolean(col>=0 && col < arr.length);
+    const isRow = Boolean(row>=0 && row < arr.length);
+    if (!isCol || !isRow) return count;
 
     //checking if we are near edge of the board
     const isNotNorth = Boolean(col-1 >= 0); 
@@ -43,7 +48,8 @@ function NearbyMines(arr, col, row) {   //arr is our board, col and row are its 
     if (isNotSouth && isNotEast && arr[col+1][row+1] === '*') count++; // east
     if (isNotEast && arr[col][row+1] === '*') count++;
     if (isNotNorth && isNotEast && arr[col-1][row+1] === '*') count++;
-    if (isNotNorth && arr[col-1][row] === '*') count++;            // north
+    if (isNotNorth && arr[col-1][row] === '*') count++;           // north
+    
     return count;
 }
 
@@ -89,7 +95,11 @@ function createRealBoard(level) {
     for (let i=0; i<realBoard.length; i++) {
         for (let j=0; j<realBoard.length; j++) {
             if (realBoard[i][j] !== '*') {
-                realBoard[i][j] = NearbyMines(realBoard, i, j);
+                if (NearbyMines(realBoard, i, j) == 0) {
+                    realBoard[i][j] = ' ';      // so it looks empty
+                } else {
+                    realBoard[i][j] = NearbyMines(realBoard, i, j);
+                }
             }
         }
     }
@@ -116,7 +126,7 @@ function createBoard(level, size) {
     return board;
 }
 
-
+//basically main function
 function play(level, size, mines) {
     const board = createBoard(level, size);
     const rows = document.querySelectorAll('.row');
@@ -126,13 +136,12 @@ function play(level, size, mines) {
     while(arr.length) {
         tails.push(arr.splice(0, size));
     }
-    let flagsCounter = 0;
-    let didLose = false;
-    let didWin = false;
+    let flagsCounter = 0;       // how many flags used by a player
+    let didWin = false;         // boolean to check if player won
 
     // check if player won
     function check() {
-        let howManyFilled = 0;
+        let howManyFilled = 0;  // how many tails were clicked
         for (let i=0; i<size; i++) {
             for (let j=0; j<size; j++) {
                 if (tails[i][j].textContent == '') {
@@ -142,7 +151,9 @@ function play(level, size, mines) {
                 }
             }
         }
-        if (howManyFilled == Math.pow(size, 2)) didWin = true;
+        console.log(`flags used: ${flagsCounter}`);
+        if (howManyFilled == Math.pow(size, 2)) didWin = true;  // if every tail was clicked, player win
+        // create info about winning 
         if (didWin && flagsCounter === mines) {
             const body = document.querySelector('body');
             const winDiv = document.createElement('div');
@@ -153,46 +164,87 @@ function play(level, size, mines) {
             container.style.opacity = 0.4;
         }
     }
-    // adding event listener
+
+    function neighbourCheck(board, i, j) {
+        //checking if we are on the board
+        const isCol = Boolean(i>=0 && i< board.length);
+        const isRow = Boolean(j>=0 && j< board.length);
+
+        //checking if we are near edge of the board
+        const isNotNorth = Boolean(i-1 >= 0); 
+        const isNotSouth = Boolean(i+1 < board.length);
+        const isNotWest = Boolean(j-1 >= 0);
+        const isNotEast = Boolean(j+1 < board.length);
+
+        let arr = [[]];
+        function changeTails(x, y) {
+            tails[x][y].style.backgroundColor = 'lightgray';
+            tails[x][y].style.borderColor = 'lightgray';
+            tails[x][y].textContent = board[x][y];
+            if (board[x][y] === ' ') {
+                arr.push([x, y]);
+            }
+        }
+        if (isCol && isRow && isNotNorth && isNotWest) changeTails(i-1, j-1); // checking west side
+        if (isCol && isRow && isNotWest) changeTails(i, j-1);
+        if (isCol && isRow && isNotSouth && isNotWest) changeTails(i+1, j-1);
+        if (isCol && isRow && isNotSouth) changeTails(i+1, j);            // south
+        if (isCol && isRow && isNotSouth && isNotEast) changeTails(i+1, j+1); // east
+        if (isCol && isRow && isNotEast) changeTails(i, j+1);
+        if (isCol && isRow && isNotNorth && isNotEast) changeTails(i-1, j+1);
+        if (isCol && isRow && isNotNorth) changeTails(i-1, j);           // north
+        
+        if (arr.length > 0) {
+            neighbourCheck(board, arr[i][0], arr[i][1]);
+        }
+        
+    }
+
+    // adding event listeners
     for (let i=0; i<size; i++) {
         for (let j=0; j<size; j++) {
             tails[i][j].addEventListener('click', () => {
+                tails[i][j].style.backgroundColor = 'lightgray';
+                tails[i][j].style.borderColor = 'lightgray';
                 if (board[i][j] === '*') {
-                    // shows whole board
-                    for (let k=0; k<size; k++) {
-                        for (let l=0; l<size; l++) {
-                            tails[k][l].textContent = board[k][l];
+                    if (tails[i][j] !== '#') {
+                        // shows whole board
+                        for (let k=0; k<size; k++) {
+                            for (let l=0; l<size; l++) {
+                                tails[k][l].textContent = board[k][l];
+                            }
                         }
+                        const body = document.querySelector('body');
+                        const lostDiv = document.createElement('div');
+                        lostDiv.setAttribute('id', 'lost');
+                        lostDiv.textContent = "You lost!";
+                        
+                        body.appendChild(lostDiv);
+                        container.style.opacity = 0.4;
                     }
-                    didLose = true;
-                    const body = document.querySelector('body');
-                    const lostDiv = document.createElement('div');
-                    lostDiv.setAttribute('id', 'lost');
-                    lostDiv.textContent = "You lost!";
-                    
-                    body.appendChild(lostDiv);
-                    container.style.opacity = 0.4;
 
-                
-                } else {
+                // don't add to flagcounter when it was already added from this tail
+                } else { 
+                    if (board[i][j] === ' ') neighbourCheck(board, i, j);
                     if (tails[i][j].textContent === '#') {
                         flagsCounter--;
+                        tails[i][j].style.backgroundColor = 'darkgray';
+                        tails[i][j].style.borderColor = 'darkgray';
                     }
                     tails[i][j].textContent = board[i][j];
                 }
                 check();
-                console.log(`flags: ${flagsCounter}`);
-                console.log(didWin);
             });
+            // right click to flag mine
             tails[i][j].addEventListener('contextmenu', (e) => {
                 e.preventDefault();
+                tails[i][j].style.backgroundColor = 'lightgray';
+                tails[i][j].style.borderColor = 'lightgray';
                 if (tails[i][j].textContent !== '#') {
                     tails[i][j].textContent = '#'; 
                     flagsCounter++;
                 }
                 check();
-                console.log(`flags: ${flagsCounter}`);
-                console.log(didWin);
             });
 
         }
@@ -202,4 +254,4 @@ function play(level, size, mines) {
 
 let myBoard = play('easy', easyBoardSize, easyMines);
 console.table(myBoard);
-console.log(`number of mines: ${easyMines}`);
+console.log(`number of mines: ${mediumMines}`);
