@@ -119,7 +119,10 @@ function createBoard(level, size) {
         for (let j=0; j<size; j++) {
             const row = document.createElement('button');
             row.setAttribute('class', 'row');
+            row.style.backgroundColor = 'darkgray';
+            row.style.borderColor = 'darkgray';
             column.appendChild(row);
+
         }
     }
     
@@ -164,50 +167,56 @@ function play(level, size, mines) {
             container.style.opacity = 0.4;
         }
     }
-
+    let checkedTails = [];
     function neighbourCheck(board, i, j) {
+        
+        let hasEmptyNeighbours = false;
+        console.log(`starting check on ${i}, ${j}`);
         //checking if we are on the board
         const isCol = Boolean(i>=0 && i< board.length);
         const isRow = Boolean(j>=0 && j< board.length);
-
+        if (!isCol || !isRow) return false;
+        
         //checking if we are near edge of the board
         const isNotNorth = Boolean(i-1 >= 0); 
         const isNotSouth = Boolean(i+1 < board.length);
         const isNotWest = Boolean(j-1 >= 0);
         const isNotEast = Boolean(j+1 < board.length);
 
-        let arr = [[]];
         function changeTails(x, y) {
             tails[x][y].style.backgroundColor = 'lightgray';
             tails[x][y].style.borderColor = 'lightgray';
-            tails[x][y].textContent = board[x][y];
-            if (board[x][y] === ' ') {
-                arr.push([x, y]);
-            }
+            tails[x][y].textContent = board[x][y]; 
+            checkedTails.push([x, y]);
         }
-        if (isCol && isRow && isNotNorth && isNotWest) changeTails(i-1, j-1); // checking west side
-        if (isCol && isRow && isNotWest) changeTails(i, j-1);
-        if (isCol && isRow && isNotSouth && isNotWest) changeTails(i+1, j-1);
-        if (isCol && isRow && isNotSouth) changeTails(i+1, j);            // south
-        if (isCol && isRow && isNotSouth && isNotEast) changeTails(i+1, j+1); // east
-        if (isCol && isRow && isNotEast) changeTails(i, j+1);
-        if (isCol && isRow && isNotNorth && isNotEast) changeTails(i-1, j+1);
-        if (isCol && isRow && isNotNorth) changeTails(i-1, j);           // north
-        
-        if (arr.length > 0) {
-            neighbourCheck(board, arr[i][0], arr[i][1]);
+        if (isCol && isRow && isNotNorth && isNotWest && board[i-1][j-1]) {
+            changeTails(i-1, j-1); // checking west side
+        } 
+        if (isCol && isRow && isNotWest && board[i][j-1]) changeTails(i, j-1);
+        if (isCol && isRow && isNotSouth && isNotWest && board[i+1][j-1]) changeTails(i+1, j-1);
+        if (isCol && isRow && isNotSouth && board[i+1][j]) changeTails(i+1, j);            // south
+        if (isCol && isRow && isNotSouth && isNotEast && board[i+1][j+1]) changeTails(i+1, j+1); // east
+        if (isCol && isRow && isNotEast && board[i][j+1]) changeTails(i, j+1);
+        if (isCol && isRow && isNotNorth && isNotEast && board[i-1][j+1]) changeTails(i-1, j+1);
+        if (isCol && isRow && isNotNorth && board[i-1][j]) changeTails(i-1, j);           // north
+
+        if (board[x][y] === ' ' && !checkedTails.includes([x, y])) { //tutaj dokonczyc
+            neighbourCheck(board, x, y);
         }
-        
+        console.log(checkedTails);
+        return true;
+         
     }
 
     // adding event listeners
     for (let i=0; i<size; i++) {
         for (let j=0; j<size; j++) {
             tails[i][j].addEventListener('click', () => {
-                tails[i][j].style.backgroundColor = 'lightgray';
-                tails[i][j].style.borderColor = 'lightgray';
-                if (board[i][j] === '*') {
-                    if (tails[i][j] !== '#') {
+                // console.log(tails[i][j].textContent);
+                if (tails[i][j].textContent !== '#') {
+                     tails[i][j].style.backgroundColor = 'lightgray';
+                     tails[i][j].style.borderColor = 'lightgray';
+                     if (board[i][j] === '*') {
                         // shows whole board
                         for (let k=0; k<size; k++) {
                             for (let l=0; l<size; l++) {
@@ -221,34 +230,33 @@ function play(level, size, mines) {
                         
                         body.appendChild(lostDiv);
                         container.style.opacity = 0.4;
-                    }
-
-                // don't add to flagcounter when it was already added from this tail
-                } else { 
-                    if (board[i][j] === ' ') neighbourCheck(board, i, j);
-                    if (tails[i][j].textContent === '#') {
-                        flagsCounter--;
-                        tails[i][j].style.backgroundColor = 'darkgray';
-                        tails[i][j].style.borderColor = 'darkgray';
-                    }
-                    tails[i][j].textContent = board[i][j];
+     
+                     // don't add to flagcounter when it was already added from this tail
+                     } else { 
+                         if (board[i][j] === ' ') neighbourCheck(board, i, j);
+                         tails[i][j].textContent = board[i][j];
+                     }
                 }
                 check();
             });
             // right click to flag mine
             tails[i][j].addEventListener('contextmenu', (e) => {
                 e.preventDefault();
-                tails[i][j].style.backgroundColor = 'lightgray';
-                tails[i][j].style.borderColor = 'lightgray';
-                if (tails[i][j].textContent !== '#') {
-                    tails[i][j].textContent = '#'; 
-                    flagsCounter++;
+                if (tails[i][j].style.backgroundColor === 'darkgray') {
+                    if (tails[i][j].textContent !== '#') {
+                        tails[i][j].textContent = '#'; 
+                        flagsCounter++;
+                    } else {
+                        tails[i][j].textContent = '';
+                        flagsCounter--;
+                    }
                 }
                 check();
             });
 
         }
     }
+    console.log(tails);
     return board;
 }
 
