@@ -142,6 +142,19 @@ function play(level, size, mines) {
     let flagsCounter = 0;       // how many flags used by a player
     let didWin = false;         // boolean to check if player won
 
+    function paintNumbers(x, y) {
+        if (board[x][y] == '1') tails[x][y].style.color = 'blue';
+        else if (board[x][y] == '2') tails[x][y].style.color = 'green';
+        else if (board[x][y] == '3') tails[x][y].style.color = 'red';
+        else if (board[x][y] == '4') tails[x][y].style.color = 'darkblue';
+        else if (board[x][y] == '5') tails[x][y].style.color = 'brown';
+        else if (board[x][y] == '*') {
+            tails[x][y].style.backgroundColor = 'red';
+            tails[x][y].style.fontWeight = '800';
+        }
+        // ADD NUMBERS TO 8
+    }
+
     // check if player won
     function check() {
         let howManyFilled = 0;  // how many tails were clicked
@@ -204,6 +217,7 @@ function play(level, size, mines) {
                 tails[x][y].style.backgroundColor = 'lightgray';
                 tails[x][y].style.borderColor = 'lightgray';
                 tails[x][y].textContent = board[x][y];
+                paintNumbers(x, y);
             }
             if (board[x][y] !== ' ') colorTails.push([x, y]);
             checkedTails.push([i, j]);
@@ -270,6 +284,7 @@ function play(level, size, mines) {
                         for (let k=0; k<size; k++) {
                             for (let l=0; l<size; l++) {
                                 tails[k][l].textContent = board[k][l];
+                                paintNumbers(k, l);
                             }
                         }
                         const body = document.querySelector('body');
@@ -282,8 +297,9 @@ function play(level, size, mines) {
      
                      // don't add to flagcounter when it was already added from this tail
                      } else { 
-                         if (board[i][j] === ' ') neighbourCheck(board, i, j);
-                         tails[i][j].textContent = board[i][j];
+                        if (board[i][j] === ' ') neighbourCheck(board, i, j);
+                        tails[i][j].textContent = board[i][j];
+                        paintNumbers(i, j);
                      }
                 }
                 check();
