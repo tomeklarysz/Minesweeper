@@ -1,4 +1,7 @@
 const container = document.querySelector('#container');
+const modal = document.querySelector('.modal');
+const closeModal = document.querySelector('.close-button');
+const modalBody = document.querySelector('.modal-body .verdict');
 
 // board sizes e.g. 9x9 and number of mines
 const easyBoardSize = 9;
@@ -171,13 +174,9 @@ function play(level, size, mines) {
         if (howManyFilled == Math.pow(size, 2)) didWin = true;  // if every tail was clicked, player win
         // create info about winning 
         if (didWin && flagsCounter === mines) {
-            const body = document.querySelector('body');
-            const winDiv = document.createElement('div');
-            winDiv.setAttribute('id', 'win');
-            winDiv.textContent = "You won!";
-                
-            body.appendChild(winDiv);
-            container.style.opacity = 0.4;
+            modal.classList.add('active');
+            modalBody.textContent = "You won!";
+            modal.style.color = 'limegreen';
         }
     }
     let checkedTails = [];
@@ -284,16 +283,14 @@ function play(level, size, mines) {
                         for (let k=0; k<size; k++) {
                             for (let l=0; l<size; l++) {
                                 tails[k][l].textContent = board[k][l];
+                                tails[k][l].style.backgroundColor = 'lightgray';
+                                tails[k][l].style.borderColor = 'lightgray';
                                 paintNumbers(k, l);
                             }
                         }
-                        const body = document.querySelector('body');
-                        const lostDiv = document.createElement('div');
-                        lostDiv.setAttribute('id', 'lost');
-                        lostDiv.textContent = "You lost!";
-                        
-                        body.appendChild(lostDiv);
-                        container.style.opacity = 0.4;
+                        modal.classList.add('active');
+                        modalBody.textContent = "You lost!";
+                        modal.style.color = 'red';
      
                      // don't add to flagcounter when it was already added from this tail
                      } else { 
@@ -325,6 +322,10 @@ function play(level, size, mines) {
     return board;
 }
 
-let myBoard = play('hard', hardBoardSize, hardMines);
+closeModal.addEventListener('click', () => {
+    modal.classList.remove('active');
+})
+
+let myBoard = play('easy', easyBoardSize, easyMines);
 console.table(myBoard);
 console.log(`number of mines: ${mediumMines}`);
