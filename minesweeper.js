@@ -168,40 +168,89 @@ function play(level, size, mines) {
         }
     }
     let checkedTails = [];
+    let colorTails = [];
     function neighbourCheck(board, i, j) {
+
+        let isChecked = false;
+        let isColored = false;
         
-        let hasEmptyNeighbours = false;
+        for (let p=0; p<checkedTails.length; p++) {
+            if (i == checkedTails[p][0] && j == checkedTails[p][1]) {
+                isChecked = true;
+                // break;
+            }
+        }
+        for (let p=0; p<colorTails.length; p++) {
+            if (i == colorTails[p][0] && j == colorTails[p][1]) {
+                isColored = true;
+                // break;
+            }
+        }
+            
         console.log(`starting check on ${i}, ${j}`);
         //checking if we are on the board
-        const isCol = Boolean(i>=0 && i< board.length);
-        const isRow = Boolean(j>=0 && j< board.length);
+        function isCol(i) {
+            return Boolean(i>=0 && i< board.length);
+        }
+        function isRow(j) {
+            return Boolean(j>=0 && j< board.length);
+        }
+        
         if (!isCol || !isRow) return false;
         
-        //checking if we are near edge of the board
-        const isNotNorth = Boolean(i-1 >= 0); 
-        const isNotSouth = Boolean(i+1 < board.length);
-        const isNotWest = Boolean(j-1 >= 0);
-        const isNotEast = Boolean(j+1 < board.length);
 
         function changeTails(x, y) {
-            tails[x][y].style.backgroundColor = 'lightgray';
-            tails[x][y].style.borderColor = 'lightgray';
-            tails[x][y].textContent = board[x][y]; 
-            checkedTails.push([x, y]);
+            if (!isColored) {
+                tails[x][y].style.backgroundColor = 'lightgray';
+                tails[x][y].style.borderColor = 'lightgray';
+                tails[x][y].textContent = board[x][y];
+            }
+            if (board[x][y] !== ' ') colorTails.push([x, y]);
+            checkedTails.push([i, j]);
         }
-        if (isCol && isRow && isNotNorth && isNotWest && board[i-1][j-1]) {
-            changeTails(i-1, j-1); // checking west side
-        } 
-        if (isCol && isRow && isNotWest && board[i][j-1]) changeTails(i, j-1);
-        if (isCol && isRow && isNotSouth && isNotWest && board[i+1][j-1]) changeTails(i+1, j-1);
-        if (isCol && isRow && isNotSouth && board[i+1][j]) changeTails(i+1, j);            // south
-        if (isCol && isRow && isNotSouth && isNotEast && board[i+1][j+1]) changeTails(i+1, j+1); // east
-        if (isCol && isRow && isNotEast && board[i][j+1]) changeTails(i, j+1);
-        if (isCol && isRow && isNotNorth && isNotEast && board[i-1][j+1]) changeTails(i-1, j+1);
-        if (isCol && isRow && isNotNorth && board[i-1][j]) changeTails(i-1, j);           // north
+        if (!isChecked) {
+            // console.log(heckedTails.includes([i, j]));
+            if (isCol(i-1) && isRow(j-1)) {
+                changeTails(i-1, j-1);
+            } 
+            if (isCol(i) && isRow(j-1)) {
+                changeTails(i, j-1);
+                
+            } 
+            if (isCol(i+1) && isRow(j-1)) {
+                changeTails(i+1, j-1);
+                 
+            }
+            if (isCol(i+1) && isRow(j)) {
+                changeTails(i+1, j);            
+                
+            }
+            if (isCol(i+1) && isRow(j+1)) {
+                changeTails(i+1, j+1);
+                
+            }
+            if (isCol(i) && isRow(j+1)) {
+                changeTails(i, j+1);
+                
+            }
+            if (isCol(i-1) && isRow(j+1)) {
+                changeTails(i-1, j+1);
+                
+            }
+            if (isCol(i-1) && isRow(j)) {
+                changeTails(i-1, j);
+                
+            }
+            // checkedTails.push([i, j]);
+            if (isCol(i-1) && isRow(j-1) && board[i-1][j-1] === ' ') neighbourCheck(board, i-1, j-1);
+            if (isCol(i) && isRow(j-1) && board[i][j-1] === ' ') neighbourCheck(board, i, j-1);
+            if (isCol(i+1) && isRow(i+1) && board[i+1][j-1] === ' ') neighbourCheck(board, i+1, j-1);
+            if (isCol(i+1) && isRow(j) && board[i+1][j] === ' ') neighbourCheck(board, i+1, j);
+            if (isCol(i+1) && isRow(j+1) && board[i+1][j+1] === ' ') neighbourCheck(board, i+1, j+1);
+            if (isCol(i) && isRow(j+1) && board[i][j+1] === ' ') neighbourCheck(board, i, j+1);
+            if (isCol(i-1) && isRow(j+1) && board[i-1][j+1] === ' ') neighbourCheck(board, i-1, j+1);
+            if (isCol(i-1) && isRow(j)  && board[i-1][j] === ' ') neighbourCheck(board, i-1, j);
 
-        if (board[x][y] === ' ' && !checkedTails.includes([x, y])) { //tutaj dokonczyc
-            neighbourCheck(board, x, y);
         }
         console.log(checkedTails);
         return true;
@@ -260,6 +309,6 @@ function play(level, size, mines) {
     return board;
 }
 
-let myBoard = play('easy', easyBoardSize, easyMines);
+let myBoard = play('hard', hardBoardSize, hardMines);
 console.table(myBoard);
 console.log(`number of mines: ${mediumMines}`);

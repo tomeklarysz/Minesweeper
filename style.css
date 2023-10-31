@@ -17,6 +17,9 @@ body {
 .row,
 .column {
     flex: 1;
+    font-size: 60%;
+    font-weight: 700;
+    padding: 0;
 }
 
 
