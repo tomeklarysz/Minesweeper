@@ -2,12 +2,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 40px;
 }
 
 #container {
     display: flex;
-    height: 400px;
-    width: 400px;
+    height: 600px;
+    width:600px;
 }
 
 .column {
@@ -17,8 +18,8 @@ body {
 .row,
 .column {
     flex: 1;
-    font-size: 60%;
-    font-weight: 700;
+    /* font-size: 60%; */
+    font-weight: 600;
     padding: 0;
 }
 
