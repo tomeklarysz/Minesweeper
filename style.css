@@ -1,7 +1,38 @@
 body {
     display: flex;
     justify-content: center;
-    align-items: center;
+}
+
+#level-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    margin-top: 25px;
+    width: 600px;
+}
+
+.level {
+    background-color: white;
+    border: 2px solid;
+    min-width: 150px;
+    height: 40px;
+    font-weight: 600;
+}
+
+.level:hover {
+    filter: brightness(0.9);
+}
+
+#easy {
+    border-color: blue;
+}
+
+#medium {
+    border-color: green;
+}
+
+#hard {
+    border-color: red;
 }
 
 #container {

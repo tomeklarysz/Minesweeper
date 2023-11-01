@@ -328,6 +328,25 @@ closeModal.addEventListener('click', () => {
     modal.classList.remove('active');
 })
 
+// choose difficulty level
+const levelButtons = document.querySelectorAll('.level');
+levelButtons.forEach(button => button.addEventListener('click', () => {
+    container.textContent = '';
+    switch (button.getAttribute('id')) {
+        case 'easy':
+            myBoard = play('easy', easyBoardSize, easyMines);
+            break;
+        case 'medium':
+            myBoard = play('medium', mediumBoardSize, mediumMines);
+            break;
+        case 'hard':
+            myBoard = play('hard', hardBoardSize, hardMines);
+            break;
+    }
+}))
+
 let myBoard = play('easy', easyBoardSize, easyMines);
 console.table(myBoard);
 console.log(`number of mines: ${mediumMines}`);
+// const easyButton = document.querySelector('#easy');
+// console.log(easyButton.getAttribute('id'));
