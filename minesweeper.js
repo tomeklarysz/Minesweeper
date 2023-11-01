@@ -170,7 +170,6 @@ function play(level, size, mines) {
                 }
             }
         }
-        console.log(`flags used: ${flagsCounter}`);
         if (howManyFilled == Math.pow(size, 2)) didWin = true;  // if every tail was clicked, player win
         // create info about winning 
         if (didWin && flagsCounter === mines) {
@@ -199,7 +198,6 @@ function play(level, size, mines) {
             }
         }
             
-        console.log(`starting check on ${i}, ${j}`);
         //checking if we are on the board
         function isCol(i) {
             return Boolean(i>=0 && i< board.length);
@@ -222,7 +220,6 @@ function play(level, size, mines) {
             checkedTails.push([i, j]);
         }
         if (!isChecked) {
-            // console.log(heckedTails.includes([i, j]));
             if (isCol(i-1) && isRow(j-1)) {
                 changeTails(i-1, j-1);
             } 
@@ -265,7 +262,6 @@ function play(level, size, mines) {
             if (isCol(i-1) && isRow(j)  && board[i-1][j] === ' ') neighbourCheck(board, i-1, j);
 
         }
-        console.log(checkedTails);
         return true;
          
     }
@@ -274,7 +270,6 @@ function play(level, size, mines) {
     for (let i=0; i<size; i++) {
         for (let j=0; j<size; j++) {
             tails[i][j].addEventListener('click', () => {
-                // console.log(tails[i][j].textContent);
                 if (tails[i][j].textContent !== '#') {
                      tails[i][j].style.backgroundColor = 'lightgray';
                      tails[i][j].style.borderColor = 'lightgray';
@@ -320,7 +315,6 @@ function play(level, size, mines) {
 
         }
     }
-    console.log(tails);
     return board;
 }
 
@@ -346,7 +340,3 @@ levelButtons.forEach(button => button.addEventListener('click', () => {
 }))
 
 let myBoard = play('easy', easyBoardSize, easyMines);
-console.table(myBoard);
-console.log(`number of mines: ${mediumMines}`);
-// const easyButton = document.querySelector('#easy');
-// console.log(easyButton.getAttribute('id'));
