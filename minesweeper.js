@@ -282,10 +282,12 @@ function play(level, size, mines) {
                         // shows whole board
                         for (let k=0; k<size; k++) {
                             for (let l=0; l<size; l++) {
-                                tails[k][l].textContent = board[k][l];
-                                tails[k][l].style.backgroundColor = 'lightgray';
-                                tails[k][l].style.borderColor = 'lightgray';
-                                paintNumbers(k, l);
+                                if (tails[k][l].textContent !== '#') {
+                                    tails[k][l].textContent = board[k][l];
+                                    tails[k][l].style.backgroundColor = 'lightgray';
+                                    tails[k][l].style.borderColor = 'lightgray';
+                                    paintNumbers(k, l);
+                                }
                             }
                         }
                         modal.classList.add('active');
