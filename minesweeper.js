@@ -112,7 +112,10 @@ function createRealBoard(level) {
 // display board;
 function createBoard(level, size) {
     const board = createRealBoard(level);     // integrate real board with the one we display
-    
+    container.appendChild(modal);
+    if (modal.classList.contains('active')) {
+        modal.classList.remove('active');
+    }
     // looping to create grid and add listeners
     for (let i=0; i<size; i++) {
         // this way we can use flexbox 
