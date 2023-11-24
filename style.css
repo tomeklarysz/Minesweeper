@@ -3,12 +3,20 @@ body {
     justify-content: center;
 }
 
+#box {
+    display: flex;
+    height: 700px;
+    width: 700px;
+    position: relative;
+    justify-content: center;
+    margin-top: 5vh;
+}
+
 #level-buttons {
     display: flex;
     justify-content: center;
     gap: 1em;
-    margin-top: 25px;
-    width: 600px;
+    position: absolute;
 }
 
 .level {
